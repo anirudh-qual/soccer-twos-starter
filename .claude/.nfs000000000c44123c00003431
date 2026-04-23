@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git -C /coc/scratch/vvobbilisetty6/twosoccer/soccer-twos-starter remote -v)",
+      "Bash(git -C /coc/scratch/vvobbilisetty6/twosoccer/soccer-twos-starter fetch upstream)",
+      "Bash(git -C /coc/scratch/vvobbilisetty6/twosoccer/soccer-twos-starter merge upstream/main --no-edit)",
+      "Bash(git -C /coc/scratch/vvobbilisetty6/twosoccer/soccer-twos-starter fetch origin)",
+      "Bash(git -C /coc/scratch/vvobbilisetty6/twosoccer/soccer-twos-starter merge origin/main --no-edit)"
+    ]
+  }
+}
