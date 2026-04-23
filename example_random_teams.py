@@ -1,7 +1,7 @@
 import soccer_twos
 
 env = soccer_twos.make(
-    render=True,
+    render=False,
     flatten_branched=True,  # converts MultiDiscrete into Discrete action space
     variation=soccer_twos.EnvType.team_vs_policy,
     single_player=True,  # controls a single player while the other stays still
