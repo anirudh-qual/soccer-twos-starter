@@ -73,5 +73,100 @@ To examine the baseline agent, you must extract the `ceia_baseline_agent` folder
 
 , to examine the random agent vs. the baseline agent.
 
+## DQN Agent with Custom Observation Wrapper
+
+This branch (`dqn_train`) contains a **Deep Q-Network (DQN) agent** implementation for Soccer-Twos, featuring a custom observation transformation wrapper for improved learning efficiency.
+
+### Overview
+
+The DQN agent (`custom_agent/`) is trained using Ray RLlib with the following key components:
+
+- **Algorithm**: Deep Q-Network (DQN) with advanced techniques (Double DQN, 3-step returns, dueling networks, Prioritized Experience Replay, C51 distributional RL, Noisy Networks)
+- **Observation Processing**: Custom `ObservationTransformWrapper` that converts high-dimensional Soccer Twos observations (200+ dims) into normalized, task-relevant features (40-80 dims)
+- **Architecture**: Two-layer neural network with ReLU activation (256 units per layer)
+- **Training**: Ray Tune with 100 iterations (100K environment timesteps)
+
+### Training the DQN Agent
+
+To train the DQN agent from scratch:
+
+```bash
+# Activate environment
+conda activate soccertwos
+
+# Run training script
+python train_custom_agent.py
+```
+
+Default configuration:
+- Learning rate: 1e-4
+- Replay buffer size: 500K (with Prioritized Experience Replay)
+- Batch size: 4096
+- Target network update: 4000 steps
+- Epsilon decay: 1.0 → 0.02 over 1M timesteps
+
+### Evaluating the DQN Agent
+
+**Test against random opponents:**
+```bash
+python evaluate_custom_agent.py
+```
+
+**Watch the trained agent play:**
+```bash
+python -m soccer_twos.watch -m custom_agent
+```
+
+**Demo with specific checkpoint:**
+```bash
+python custom_agent_demo.py
+```
+
+### Observation Wrapper Details
+
+The `ObservationTransformWrapper` extracts task-relevant features:
+
+- **Relative ball position & velocity** (normalized by field dimensions and max velocity)
+- **Agent velocity & rotation** (normalized to [-1, 1])
+- **Other players' relative positions & velocities**
+- **Distance to ball** (Euclidean metric, normalized)
+- **Angle to goal** (bearing angle, normalized to [-1, 1])
+
+All features are clipped to [-1, 1] for stable learning. This normalized, egocentric representation enables better gradient flow and generalization across varying opponent positions.
+
+### Pre-trained Checkpoint
+
+A trained checkpoint is included at `custom_agent/checkpoint.pth` (iteration 600):
+- Mean reward: ~0.05 to 0.15
+- Training time: ~12 hours on 16 CPU cores
+- Converged learning curve visible in `mean_reward_curve.png`
+
+### Files & Structure
+
+```
+custom_agent/
+├── agent.py                  # DQN agent class implementing AgentInterface
+├── observation_wrapper.py    # Custom observation transformation logic
+├── reward_shaping.py         # Reward modification utilities
+├── checkpoint.pth            # Pre-trained model weights (iteration 600)
+├── requirements.txt          # Agent-specific dependencies
+└── README.md                 # Detailed agent documentation
+
+train_custom_agent.py         # Training script with Ray RLlib configuration
+evaluate_custom_agent.py      # Evaluation script (win rate vs policy)
+custom_agent_demo.py          # Demo script for inference
+training_curves_visualization.ipynb  # Jupyter notebook for metric visualization
+report.tex                    # CORL 2026 paper on DQN + observation wrapper
+```
+
+### Research Highlights
+
+This implementation was developed as part of a research comparison of two RL agents for Soccer Twos:
+- **Agent 1 (Baseline)**: PPO with curriculum learning and reward shaping
+- **Agent 2 (This branch)**: DQN with custom observation wrapper for feature engineering
+
+The DQN approach leverages off-policy learning stability combined with engineered egocentric features to achieve competitive performance without dense reward shaping.
+
+For detailed implementation notes and experimental results, see `report.tex`.
 
 
