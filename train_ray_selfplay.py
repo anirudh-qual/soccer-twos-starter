@@ -1,3 +1,5 @@
+import os
+
 import numpy as np
 import ray
 from ray import tune
@@ -6,6 +8,14 @@ from utils import create_rllib_env
 
 
 NUM_ENVS_PER_WORKER = 3
+DEFAULT_RESTORE_CHECKPOINT = (
+    "ray_results/PPO_selfplay_rec/"
+    "PPO_Soccer_curr_agent_00000_0_imported_2026-04-24/"
+    "checkpoint_002300/checkpoint-2300"
+)
+RESTORE_CHECKPOINT = os.environ.get("RESTORE_CHECKPOINT", DEFAULT_RESTORE_CHECKPOINT)
+if RESTORE_CHECKPOINT and not os.path.exists(RESTORE_CHECKPOINT):
+    RESTORE_CHECKPOINT = None
 
 
 def policy_mapping_fn(agent_id, *args, **kwargs):
@@ -38,6 +48,10 @@ class SelfPlayUpdateCallback(DefaultCallbacks):
 
 if __name__ == "__main__":
     ray.init()
+    if RESTORE_CHECKPOINT:
+        print(f"Restoring PPO self-play training from: {RESTORE_CHECKPOINT}")
+    else:
+        print("No restore checkpoint found; starting PPO self-play training from scratch.")
 
     tune.registry.register_env("Soccer", create_rllib_env)
     temp_env = create_rllib_env()
@@ -81,7 +95,7 @@ if __name__ == "__main__":
         checkpoint_freq=100,
         checkpoint_at_end=True,
         local_dir="./ray_results",
-        # restore="./ray_results/PPO_selfplay_twos_2/PPO_Soccer_a8b44_00000_0_2021-09-18_11-13-55/checkpoint_000600/checkpoint-600",
+        restore=RESTORE_CHECKPOINT,
     )
 
     # Gets best trial based on max accuracy across all training iterations.

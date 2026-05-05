@@ -1,6 +1,10 @@
 tasks:
   - name: "Very Easy Goal"
     config_fn: none
+    shaping_max_abs: 0.05
+    advance_win_rate: 0.85
+    advance_non_loss_rate: 0.90
+    advance_extrinsic_return: 1.5
     ranges:
       ball:
         position:
@@ -13,7 +17,11 @@ tasks:
             x: [7, 11]
             y: [-5, 5]
   - name: "Easy Goal"
-    config_fn: none
+    config_fn: random_players
+    shaping_max_abs: 0.045
+    advance_win_rate: 0.80
+    advance_non_loss_rate: 0.88
+    advance_extrinsic_return: 1.3
     ranges:
       ball:
         position:
@@ -29,7 +37,11 @@ tasks:
             x: [7, 14]
             y: [-5, 5]
   - name: "Medium Goal"
-    config_fn: none
+    config_fn: random_players
+    shaping_max_abs: 0.04
+    advance_win_rate: 0.75
+    advance_non_loss_rate: 0.85
+    advance_extrinsic_return: 1.1
     ranges:
       ball:
         position:
@@ -45,7 +57,12 @@ tasks:
             x: [-7, 14]
             y: [-5, 5]
   - name: "Hard Goal"
-    config_fn: none
+    config_fn: selfplay_mixed
+    opponent_random_prob: 0.35
+    shaping_max_abs: 0.03
+    advance_win_rate: 0.65
+    advance_non_loss_rate: 0.78
+    advance_extrinsic_return: 0.7
     ranges:
       ball:
         position:
@@ -61,7 +78,9 @@ tasks:
             x: [-14, 14]
             y: [-5, 5]
   - name: "Random Players"
-    config_fn: random_players
+    config_fn: selfplay_mixed
+    opponent_random_prob: 0.20
+    shaping_max_abs: 0.025
     ranges:
       ball:
         position:
