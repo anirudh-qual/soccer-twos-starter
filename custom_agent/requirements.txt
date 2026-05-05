@@ -1,0 +1,4 @@
+# CustomAgent requirements
+# These are in addition to the base requirements in the parent directory
+# The agent uses PyTorch for neural networks, Ray Tune for training
+torch>=1.9.0
